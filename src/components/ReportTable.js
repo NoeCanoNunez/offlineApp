@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { getOfflineReports } from "../idb"; // Asegúrate de que esta función esté disponible
-import syncReports from "../sync"; // Asegúrate de importar la función de sincronización
+import { getOfflineReports, deleteReport, getOfflineReportById } from "../idb";
+import syncReports from "../sync";
 
 function ReportTable() {
   const [reports, setReports] = useState([]);
-  const [isOnline, setIsOnline] = useState(navigator.onLine); // Estado para ver si está online
-  const [loading, setLoading] = useState(false); // Estado para mostrar el loader
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [loading, setLoading] = useState(false);
 
-  // Obtener reportes de IndexedDB cuando el componente se monta
   useEffect(() => {
     async function fetchReports() {
       const storedReports = await getOfflineReports();
@@ -16,7 +15,6 @@ function ReportTable() {
     fetchReports();
   }, []);
 
-  // Escuchar cambios en la conexión online/offline
   useEffect(() => {
     const handleOnlineStatus = () => setIsOnline(navigator.onLine);
     window.addEventListener("online", handleOnlineStatus);
@@ -28,18 +26,29 @@ function ReportTable() {
     };
   }, []);
 
-  // Función para sincronizar manualmente
   const handleSync = async () => {
-    console.log(reports);
     if (isOnline) {
-      setLoading(true); // Mostrar el loader
-      await syncReports(); // Sincroniza los reportes
-      const updatedReports = await getOfflineReports(); // Vuelve a obtener los reportes actualizados
-      setReports(updatedReports); // Actualiza el estado de los reportes para que se refleje en la tabla
-      setLoading(false); // Ocultar el loader
+      setLoading(true);
+      await syncReports();
+      const updatedReports = await getOfflineReports();
+      setReports(updatedReports);
+      setLoading(false);
     } else {
       alert("No estás online. Conéctate para sincronizar los reportes.");
     }
+  };
+
+  const handleDelete = async (id) => {
+    await deleteReport(id);
+    const updatedReports = await getOfflineReports();
+    setReports(updatedReports);
+  };
+
+  const checkInDatabase = async (id) => {
+    // Aquí podrías implementar la lógica para verificar si el reporte está en la base de datos.
+    // Por ejemplo, podrías llamar a una API o usar alguna lógica existente.
+    const report = await getOfflineReportById(id); // Simulación de verificación
+    return report ? "En base de datos" : "No encontrado";
   };
 
   return (
@@ -47,33 +56,85 @@ function ReportTable() {
       <h2 className="text-xl font-bold mb-4">Historial de Reportes Añadidos</h2>
       {loading ? (
         <div className="flex justify-center my-4">
-          <div className="ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
-          <div class="w-16 h-16 border-4 border-solid border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
+          <div className="w-16 h-16 border-4 border-solid border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
         </div>
       ) : (
         <table className="min-w-full bg-white shadow-md rounded-lg">
           <thead>
             <tr className="bg-gray-200">
-              <th className="py-2 px-4 text-left">Descripción</th>
-              <th className="py-2 px-4 text-left">Imagen</th>
+              <th className="py-2 px-4 text-left">Nombre de la Máquina</th>
+              <th className="py-2 px-4 text-left">Proyecto</th>
+              <th className="py-2 px-4 text-left">Fecha de Ingreso</th>
+              <th className="py-2 px-4 text-left">Fecha de Salida</th>
+              <th className="py-2 px-4 text-left">Observación</th>
+              <th className="py-2 px-4 text-left">Imágenes</th>
               <th className="py-2 px-4 text-left">Estado</th>
+              <th className="py-2 px-4 text-left">Enviado</th>
+              <th className="py-2 px-4 text-left">Acciones</th>
+              <th className="py-2 px-4 text-left">Verificación</th>
             </tr>
           </thead>
           <tbody>
             {reports.length > 0 ? (
               reports.map((report, index) => (
                 <tr key={index} className="border-t">
-                  <td className="py-2 px-4">{report.description}</td>
-                  <td className="py-2 px-4">{report.image.name}</td>
+                  <td className="py-2 px-4">{report.nombreMaquina}</td>
+                  <td className="py-2 px-4">{report.proyecto}</td>
+                  <td className="py-2 px-4">{report.fechaIngreso}</td>
+                  <td className="py-2 px-4">{report.fechaSalida}</td>
+                  <td className="py-2 px-4">{report.observacion || "Sin observaciones"}</td>
+                  <td className="py-2 px-4">
+                    {report.images && report.images.length > 0 ? (
+                      <ul>
+                        {report.images.map((image, imgIndex) => (
+                          <li key={imgIndex}>{image.name || "Imagen sin nombre"}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      "Sin imágenes"
+                    )}
+                  </td>
                   <td className="py-2 px-4">
                     {report.synced ? "Sincronizado" : "Pendiente"}
-                  </td>{" "}
-                  {/* Mostrar el estado correcto */}
+                  </td>
+                  <td className="py-2 px-4">
+                    {report.synced ? (
+                      <span className="text-green-500">Enviado</span>
+                    ) : (
+                      <span className="text-red-500">No enviado</span>
+                    )}
+                  </td>
+                  <td className="py-2 px-4">
+                    <button
+                      className="text-blue-500 hover:underline mr-2"
+                      onClick={() => console.log("Edit", report.id)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="text-red-500 hover:underline"
+                      onClick={() => handleDelete(report.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                  <td className="py-2 px-4">
+                    {report.synced ? (
+                      <span>Verificado</span>
+                    ) : (
+                      <button
+                        onClick={() => checkInDatabase(report.id)}
+                        className="text-blue-500 hover:underline"
+                      >
+                        Verificar
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="py-4 text-center">
+                <td colSpan="10" className="py-4 text-center">
                   No hay reportes almacenados.
                 </td>
               </tr>
@@ -82,13 +143,14 @@ function ReportTable() {
         </table>
       )}
 
-      {/* Botón para sincronizar manualmente */}
       <button
         onClick={handleSync}
         className={`mt-4 py-2 px-4 font-bold text-white ${
-          isOnline ? "bg-blue-500" : "bg-gray-500 cursor-not-allowed"
+          isOnline
+            ? "bg-blue-500 hover:bg-blue-700"
+            : "bg-gray-500 cursor-not-allowed"
         } rounded-md shadow-lg`}
-        disabled={!isOnline} // Deshabilitar el botón si está offline
+        disabled={!isOnline}
       >
         {isOnline
           ? "Sincronizar Reportes Manualmente"
