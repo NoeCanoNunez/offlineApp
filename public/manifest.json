@@ -1,7 +1,7 @@
 {
   "name": "Reporte Offline",
   "short_name": "Reporte",
-  "description": "Descripción de tu aplicación.",
+  "description": "Puedes guardar tus reportes offline y enviarlos cuando tengas internet",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
