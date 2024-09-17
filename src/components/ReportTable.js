@@ -164,8 +164,8 @@ function ReportTable({ loader }) {
                         className={`w-4 h-4 rounded-full ${
                           report.synced
                             ? report.enBaseDatos
-                              ? "bg-green-500"
-                              : "bg-orange-500"
+                              ? "bg-green-600"
+                              : "bg-green-500"
                             : "bg-red-500"
                         }`}
                       ></div>

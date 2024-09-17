@@ -147,7 +147,7 @@ function ReportForm({ onReportSaved }) {
             onChange={(e) => setNombreMaquina(e.target.value)}
             placeholder="Nombre de la máquina"
             required
-            className="text-xs/3 w-full p-1 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="text-md w-full p-2 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <input
             type="text"
@@ -155,7 +155,7 @@ function ReportForm({ onReportSaved }) {
             onChange={(e) => setProyecto(e.target.value)}
             placeholder="Proyecto"
             required
-            className="text-xs/3 w-full p-1 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="text-md w-full p-2 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <div>
             <label>Fecha de Ingreso</label>
@@ -164,7 +164,7 @@ function ReportForm({ onReportSaved }) {
               value={fechaIngreso}
               onChange={(e) => setFechaIngreso(e.target.value)}
               required
-              className="text-xs/3 w-full p-1 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="text-md w-full p-2 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
@@ -174,14 +174,14 @@ function ReportForm({ onReportSaved }) {
               value={fechaSalida}
               onChange={(e) => setFechaSalida(e.target.value)}
               required
-              className="text-xs/3 w-full p-1 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="text-md w-full p-2 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <textarea
             value={observacion}
             onChange={(e) => setObservacion(e.target.value)}
             placeholder="Observación"
-            className="text-xs/3 w-full p-1 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="text-md w-full p-2 md:p-4 md:text-sm bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <input
             type="file"
